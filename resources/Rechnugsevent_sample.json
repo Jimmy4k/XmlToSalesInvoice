@@ -1,0 +1,124 @@
+{
+  "uuid": "7434b2eb-e3d2-4066-bb8d-33fe405d3400",
+  "timestamp": 1654773140701,
+  "resource": {
+    "type": "INVOICE_NEW",
+    "uuid": "e3c6935e-aed1-495d-830b-e9e4e54d87dc",
+    "url": "https://admin.ziqsas.com/api/appmarket/v1/invoices/e3c6935e-aed1-495d-830b-e9e4e54d87dc?localized=false",
+    "content": {
+      "id": "44118245",
+      "uuid": "e3c6935e-aed1-495d-830b-e9e4e54d87dc",
+      "locale": null,
+      "localized": null,
+      "invoiceNumber": "49193201",
+      "billingRelationshipOwnerInvoiceNumber": "205",
+      "partner": "SENACORSANDBOX",
+      "status": "PAID",
+      "currency": "EUR",
+      "invoiceDate": "2022-06-09",
+      "paymentTerms": {
+        "dueDate": "2022-09-07"
+      },
+      "seller": null,
+      "customer": {
+        "userRef": "1e37e8a1-ac79-4dfc-abd6-a50db001a23c",
+        "companyRef": "32320ff0-637d-45a9-9ade-bb356e4666d5",
+	"companyStreet" : "Musterstraße",
+	"companyCity" : "Musterstadt",
+	"companyZip" : "12345",
+	"companyName" : "Musterfirma",
+	"userName": "Maria Musterfrau"
+      },
+      "lines": [
+        {
+          "id": "81081899",
+          "description": "QDAS Plastivaloire - Free PlugIn - Monthly Fee Period from 06/09/22 to 07/09/22",
+          "quantity": "1.0000000000",
+          "unitPrice": "0.0000000000",
+          "total": "0.0000000000",
+          "buyer": {
+            "userRef": "1e37e8a1-ac79-4dfc-abd6-a50db001a23c",
+            "companyRef": "32320ff0-637d-45a9-9ade-bb356e4666d5"
+          },
+          "provider": {
+            "userRef": null,
+            "companyRef": "32320ff0-637d-45a9-9ade-bb356e4666d5"
+          },
+          "period": {
+            "start": "2022-06-09",
+            "end": "2022-07-09"
+          },
+          "cost": {
+            "type": "RECURRING_FLAT",
+            "typeCategory": "RECURRING",
+            "unit": null,
+            "strategy": "FREE",
+            "credit": false,
+            "percentage": false
+          },
+          "subscriptionRef": "2669837",
+          "orderRef": "5426087",
+          "productRef": "98361",
+          "editionRef": "271541",
+          "pricingPlanRef": "326027",
+          "discountRef": null
+        }
+      ],
+      "amountDue": "0.0000000000",
+      "amountPaid": "0.0000000000",
+      "subtotal": "0.0000000000",
+      "totalTax": "0.0000000000",
+      "carriedBalance": "0.0000000000",
+      "creditNote": false,
+      "total": "0.0000000000",
+      "taxReport": null,
+      "taxSummary": [
+        {
+          "taxType": {
+            "id": "Sales Tax",
+            "name": "Sales Tax",
+            "rate": "0.0000000000"
+          },
+          "taxableAmount": "0.0000000000",
+          "taxAmount": "0.0000000000"
+        }
+      ],
+      "refundInvoice": false,
+      "refundedInvoice": null,
+      "delegatedToInvoice": null,
+      "carriedInvoices": [],
+      "users": {},
+      "companies": {},
+      "marketplaces": {},
+      "subscriptions": {
+        "2669837": {
+          "id": "2669837",
+          "uuid": "ccbcef5f-d24f-4ea9-94ac-f4585951358f",
+          "startDate": "2022-06-09"
+        }
+      },
+      "orders": {
+        "5426087": {
+          "id": "5426087",
+          "createdOn": "2022-06-09",
+          "type": "PRE_PAID",
+          "subscriptionType": "NEW"
+        }
+      },
+      "products": {},
+      "editions": {},
+      "pricingPlans": {
+        "326027": {
+          "id": "326027",
+          "uuid": "7598dac6-c2a9-4cff-b041-4e59d94d9da1",
+          "period": "MONTHLY"
+        }
+      },
+      "discounts": {},
+      "costTypes": {},
+      "costPeriods": {},
+      "costUnits": {}
+    }
+  },
+  "resourceAction": "ADDED"
+}
