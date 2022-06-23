@@ -53,7 +53,7 @@ codeunit 50100 "Import Sales Invoice From Json"
             GetSalesLinesDetials(ContentObject, SalesHeader);
     end;
 
-    local procedure GetSalesHeaderDetails(var SalesHeader: Record "Sales Header";OrderObject: JsonObject; ResourceObject: JsonObject; ContentObject: JsonObject; CustomerObjekt: JsonObject): Boolean
+    local procedure GetSalesHeaderDetails(var SalesHeader: Record "Sales Header"; OrderObject: JsonObject; ResourceObject: JsonObject; ContentObject: JsonObject; CustomerObjekt: JsonObject): Boolean
     var
         ValueToken: JsonToken;
         DocumentType: Enum "Sales Document Type";
@@ -76,8 +76,11 @@ codeunit 50100 "Import Sales Invoice From Json"
         // Legt die Debitornr. an
         if ContentObject.Get('id', ValueToken) then begin
             // Prüft ob der Dibitor existiert
-            if Cusotmer.Get(ValueToken.AsValue().AsCode()) then
+            if Cusotmer.Get(ValueToken.AsValue().AsCode()) then begin
+                if Cusotmer.Blocked = Cusotmer.Blocked::Invoice then
+                    exit;
                 SalesHeader.Validate("Sell-to Customer No.", ValueToken.AsValue().AsCode())
+            end
             // wenn nicht vorhande, lege an und weise die No. zu
             else begin
                 CreateCustomer(ContentObject, CustomerObjekt, Cusotmer, ValueToken);
@@ -134,6 +137,9 @@ codeunit 50100 "Import Sales Invoice From Json"
         ValueToken: JsonToken;
         ItemNo: Code[20];
         LineQty: Decimal;
+        UnitPrice: Decimal;
+        VATBaseAmount: Decimal;
+
     begin
         if ContentObject.Contains('lines') then
             if ContentObject.Get('lines', LineArray) then
@@ -141,22 +147,34 @@ codeunit 50100 "Import Sales Invoice From Json"
                     LineObject := LineToken.AsObject();
                     if LineObject.Get('id', ValueToken) then
                         ItemNo := ValueToken.AsValue().AsCode();
-                        // Prüft ob der Artikel existiert
-                        if not Item.get(ItemNo) then
-                            CreateNewItem(ContentObject, ItemNo);
+                    // Prüft ob der Artikel existiert
+                    if Item.get(ItemNo) then begin
+                        // ist Item gesperrt = Abbruch
+                        if Item.Blocked = true then
+                            exit;
+                    end
+                    // sonst erstelle ein neuen Debitor
+                    else
+                        CreateNewItem(ContentObject, ItemNo);
+
                     if LineObject.Get('quantity', ValueToken) then
                         LineQty := ValueToken.AsValue().AsDecimal();
+                    if LineObject.Get('unitPrice', ValueToken) then
+                        UnitPrice := Round(ValueToken.AsValue().AsDecimal(), 2);
+                    if LineObject.Get('total', ValueToken) then
+                        VATBaseAmount := ValueToken.AsValue().AsDecimal();
 
-
-                        SalesLine.Init();
-                        SalesLine."Document Type" := SalesHeader."Document Type";
-                        SalesLine."Document No." := SalesHeader."No.";
-                        SalesLine."Line No." := GetNextSalesLineNo(SalesHeader);
-                        SalesLine.Insert(true);
-                        SalesLine.Type := SalesLine.Type::Item;
-                        SalesLine.Validate("No.", ItemNo);
-                        SalesLine.Validate(Quantity, LineQty);
-                        SalesLine.Modify(true);
+                    SalesLine.Init();
+                    SalesLine."Document Type" := SalesHeader."Document Type";
+                    SalesLine."Document No." := SalesHeader."No.";
+                    SalesLine."Line No." := GetNextSalesLineNo(SalesHeader);
+                    SalesLine.Insert(true);
+                    SalesLine.Type := SalesLine.Type::Item;
+                    SalesLine.Validate("No.", ItemNo);
+                    SalesLine.Validate(Quantity, LineQty);
+                    SalesLine."Unit Price" := 0;
+                    SalesLine."Line Amount" := 0;
+                    SalesLine.Modify(true);
                 end;
     end;
 
@@ -166,14 +184,14 @@ codeunit 50100 "Import Sales Invoice From Json"
     begin
         SalesLine.SetRange("Document Type", SalesHeader."Document Type");
         SalesLine.SetRange("Document No.", SalesHeader."No.");
-            if SalesLine.FindLast() then
-                exit(SalesLine."Line No." + 10000);
-            exit(10000);
+        if SalesLine.FindLast() then
+            exit(SalesLine."Line No." + 10000);
+        exit(10000);
     end;
 
     local procedure CreateNewItem(ContentObject: JsonObject; ItemNo: Code[20])
         Item: Record Item;
     begin
-        
+
     end;
 }
