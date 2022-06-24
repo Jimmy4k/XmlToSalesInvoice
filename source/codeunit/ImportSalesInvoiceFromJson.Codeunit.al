@@ -53,7 +53,7 @@ codeunit 50100 "Import Sales Invoice From Json"
         if GetSalesHeaderDetails(SalesHeader, OrderObject, ResourceObject, ContentObject, CustomerObject) then
             if GetSalesLinesDetials(SalesHeader, SalesLine, ContentObject) then begin
                 Commit();
-                ShowPreview(SalesHeader);
+                PostingSalesInvoice(SalesHeader);
             end;
 
     end;
@@ -142,7 +142,7 @@ codeunit 50100 "Import Sales Invoice From Json"
                     // sonst erstelle den Artikel
                     else
                         CreateNewItem(ContentObject, ItemNo);
-                        
+
                     if LineObject.Get('quantity', ValueToken) then
                         LineQty := ValueToken.AsValue().AsDecimal();
                     if LineObject.Get('unitPrice', ValueToken) then
@@ -204,10 +204,6 @@ codeunit 50100 "Import Sales Invoice From Json"
     end;
 
     local procedure PostingSalesInvoice(SalesHeader: Record "Sales Header")
-    begin
-    end;
-
-    local procedure ShowPreview(SalesHeader: Record "Sales Header")
     var
         SalesPostYesNo: Codeunit "Sales-Post (Yes/No)";
     begin
