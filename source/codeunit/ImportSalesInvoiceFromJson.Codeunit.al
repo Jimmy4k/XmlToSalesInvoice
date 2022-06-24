@@ -1,4 +1,4 @@
-codeunit 50100 "Import Sales Invoice From Json"
+codeunit 50000 "Import Sales Invoice From Json"
 {
     procedure ImportSalesInvoiceFromJson()
     var
@@ -55,7 +55,6 @@ codeunit 50100 "Import Sales Invoice From Json"
                 Commit();
                 PostingSalesInvoice(SalesHeader);
             end;
-
     end;
 
     local procedure GetSalesHeaderDetails(var SalesHeader: Record "Sales Header"; OrderObject: JsonObject; ResourceObject: JsonObject; ContentObject: JsonObject; CustomerObjekt: JsonObject): Boolean

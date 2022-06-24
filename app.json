@@ -1,23 +1,23 @@
 {
   "id": "b156ba7e-35fc-4719-8414-cdee00b4648c",
-  "name": "XmlToSalesInvoice",
-  "publisher": "Default publisher",
-  "version": "1.0.0.0",
-  "brief": "",
+  "name": "WORKATO",
+  "publisher": "M&P Business Solutions GmbH",
+  "version": "1.0.0.1",
+  "brief": "WORKATO",
   "description": "",
-  "privacyStatement": "",
-  "EULA": "",
-  "help": "",
-  "url": "",
-  "logo": "",
+  "privacyStatement": "https://mp-solutions.de/",
+  "EULA": "https://mp-solutions.de/",
+  "help": "https://mp-solutions.de/support/",
+  "url": "https://mp-solutions.de/",
+  "logo": "./resources/image001.png",
   "dependencies": [],
   "screenshots": [],
   "platform": "1.0.0.0",
   "application": "20.0.0.0",
   "idRanges": [
     {
-      "from": 50100,
-      "to": 50149
+      "from": 50000,
+      "to": 50100
     }
   ],
   "resourceExposurePolicy": {
