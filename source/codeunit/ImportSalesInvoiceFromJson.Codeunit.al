@@ -139,9 +139,10 @@ codeunit 50100 "Import Sales Invoice From Json"
                         if Item.Blocked = true then
                             exit;
                     end
-                    // sonst erstelle ein neuen Debitor
+                    // sonst erstelle den Artikel
                     else
                         CreateNewItem(ContentObject, ItemNo);
+                        
                     if LineObject.Get('quantity', ValueToken) then
                         LineQty := ValueToken.AsValue().AsDecimal();
                     if LineObject.Get('unitPrice', ValueToken) then
