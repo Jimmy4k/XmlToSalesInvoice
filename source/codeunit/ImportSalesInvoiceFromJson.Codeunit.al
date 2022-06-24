@@ -30,6 +30,7 @@ codeunit 50100 "Import Sales Invoice From Json"
         LineArray: JsonToken;
         LineObject: JsonObject;
         SalesHeader: Record "Sales Header";
+        SalesLine: Record "Sales Line";
     begin
         if not InputToken.IsObject then
             exit;
@@ -50,7 +51,11 @@ codeunit 50100 "Import Sales Invoice From Json"
                 LineObject := LineArray.AsObject();
         // Fügt den SalesHeader ein
         if GetSalesHeaderDetails(SalesHeader, OrderObject, ResourceObject, ContentObject, CustomerObject) then
-            GetSalesLinesDetials(ContentObject, SalesHeader);
+            if GetSalesLinesDetials(SalesHeader, SalesLine, ContentObject) then begin
+                Commit();
+                ShowPreview(SalesHeader);
+            end;
+
     end;
 
     local procedure GetSalesHeaderDetails(var SalesHeader: Record "Sales Header"; OrderObject: JsonObject; ResourceObject: JsonObject; ContentObject: JsonObject; CustomerObjekt: JsonObject): Boolean
@@ -58,6 +63,8 @@ codeunit 50100 "Import Sales Invoice From Json"
         ValueToken: JsonToken;
         DocumentType: Enum "Sales Document Type";
         Cusotmer: Record Customer;
+        PaymentTems: Record "Payment Terms";
+        PaymentMethod: Record "Payment Method";
     begin
         SalesHeader.Init();
         // Überprüft den DocumentType und definiert hin
@@ -93,10 +100,13 @@ codeunit 50100 "Import Sales Invoice From Json"
             SalesHeader.Validate("Posting Date", ValueToken.AsValue().AsDate());
         end;
 
-        // Legt den Status an // NOCH BEARBEITEN!!!
+        // Legt den Zahlungsbedienung und Zahlungsformen an
         if ContentObject.Get('status', ValueToken) then begin
             if ValueToken.AsValue().AsText() = 'PAID' then
-                ;
+                if PaymentTems.Get('PAID') then
+                    SalesHeader.Validate("Payment Terms Code", PaymentTems.Code);
+            if PaymentMethod.Get('PAID') then
+                SalesHeader.Validate("Payment Method Code", PaymentMethod.Code);
         end;
 
         SalesHeader.Modify(true);
@@ -104,33 +114,9 @@ codeunit 50100 "Import Sales Invoice From Json"
         exit(true);
     end;
 
-
-    local procedure CreateCustomer(ContentObject: JsonObject; CustomerObjekt: JsonObject; Cusotmer: Record Customer; ValueToken: JsonToken)
-    begin
-        Cusotmer.Init();
-
-        // Legt die Debitornr. an
-        Cusotmer."No." := ValueToken.AsValue().AsCode();
-
-        // Legt den Debitorname an
-        if CustomerObjekt.get('companyName', ValueToken) then begin
-            Cusotmer.Name := ValueToken.AsValue().AsText();
-        end;
-        // Legt die Adresse an
-        if CustomerObjekt.Get('companyStreet', ValueToken) then begin
-            Cusotmer.Address := ValueToken.AsValue().AsText();
-        end;
-        // Legt die City an
-        if CustomerObjekt.Get('companyCity', ValueToken) then begin
-            Cusotmer.City := ValueToken.AsValue().AsText();
-        end;
-        Cusotmer.Insert(true);
-    end;
-
-    local procedure GetSalesLinesDetials(ContentObject: JsonObject; SalesHeader: Record "Sales Header")
+    local procedure GetSalesLinesDetials(var SalesHeader: Record "Sales Header"; var SalesLine: Record "Sales Line"; ContentObject: JsonObject): Boolean
     var
         Item: Record Item;
-        SalesLine: Record "Sales Line";
         LineArray: JsonToken;
         LineToken: JsonToken;
         LineObject: JsonObject;
@@ -156,7 +142,6 @@ codeunit 50100 "Import Sales Invoice From Json"
                     // sonst erstelle ein neuen Debitor
                     else
                         CreateNewItem(ContentObject, ItemNo);
-
                     if LineObject.Get('quantity', ValueToken) then
                         LineQty := ValueToken.AsValue().AsDecimal();
                     if LineObject.Get('unitPrice', ValueToken) then
@@ -172,11 +157,33 @@ codeunit 50100 "Import Sales Invoice From Json"
                     SalesLine.Type := SalesLine.Type::Item;
                     SalesLine.Validate("No.", ItemNo);
                     SalesLine.Validate(Quantity, LineQty);
-                    SalesLine."Unit Price" := 0;
-                    SalesLine."Line Amount" := 0;
+                    SalesLine."Unit Price" := UnitPrice;
                     SalesLine.Modify(true);
                 end;
+        exit(true);
     end;
+
+    local procedure CreateCustomer(ContentObject: JsonObject; CustomerObjekt: JsonObject; Cusotmer: Record Customer; ValueToken: JsonToken)
+    begin
+        Cusotmer.Init();
+
+        // Legt die Debitornr. an
+        Cusotmer."No." := ValueToken.AsValue().AsCode();
+        // Legt den Debitorname an
+        if CustomerObjekt.get('companyName', ValueToken) then begin
+            Cusotmer.Name := ValueToken.AsValue().AsText();
+        end;
+        // Legt die Adresse an
+        if CustomerObjekt.Get('companyStreet', ValueToken) then begin
+            Cusotmer.Address := ValueToken.AsValue().AsText();
+        end;
+        // Legt die City an
+        if CustomerObjekt.Get('companyCity', ValueToken) then begin
+            Cusotmer.City := ValueToken.AsValue().AsText();
+        end;
+        Cusotmer.Insert(true);
+    end;
+
 
     local procedure GetNextSalesLineNo(SalesHeader: Record "Sales Header"): Integer
     var
@@ -193,5 +200,16 @@ codeunit 50100 "Import Sales Invoice From Json"
         Item: Record Item;
     begin
 
+    end;
+
+    local procedure PostingSalesInvoice(SalesHeader: Record "Sales Header")
+    begin
+    end;
+
+    local procedure ShowPreview(SalesHeader: Record "Sales Header")
+    var
+        SalesPostYesNo: Codeunit "Sales-Post (Yes/No)";
+    begin
+        SalesPostYesNo.Run(SalesHeader);
     end;
 }

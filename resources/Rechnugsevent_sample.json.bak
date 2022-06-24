@@ -34,7 +34,7 @@
           "id": "81081899",
           "description": "QDAS Plastivaloire - Free PlugIn - Monthly Fee Period from 06/09/22 to 07/09/22",
           "quantity": "1.0000000000",
-          "unitPrice": "0.0000000000",
+          "unitPrice": "10.0000000000",
           "total": "0.0000000000",
           "buyer": {
             "userRef": "1e37e8a1-ac79-4dfc-abd6-a50db001a23c",
